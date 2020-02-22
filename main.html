@@ -47,14 +47,15 @@ function drawScreen(x, y, x2, y2){
 //updates snake size and location
 function update(){
 	if (enlarge == true){
-	tail.push(tail[tail.length-1]);
-	enlarge = false;
+	   tail.push(tail[tail.length-1]);
+	   enlarge = false;
 	}
 	
    for (i=0; i < tail.length; i++) {
-      tail[i] = tail[i+1];
+       tail[i] = tail[i+1];
     }
-	 tail[tail.length-1] = {x:x, y:y}
+	
+   tail[tail.length-1] = {x:x, y:y}
   
  switch (direction){
 	case 'R':
@@ -125,7 +126,7 @@ function checkKey(e) {
 
 }
 
-//checks if any part of snake comes anywhere in contact with the fruit.
+//checks if any part of snake head comes in contact with the fruit.
 function collectFruit(){
  if((x >= x2 && x <= x2+10) || (x+10 >= x2 &&  x+10 <= x2+10)){
      if ((y >= y2 && y <= y2+10) || (y+10 >= y2 && y+10 <= y2+10)){
@@ -134,7 +135,7 @@ function collectFruit(){
 		points += 10;
 		enlarge = true;
 	 }
- }
+  }
 }
 
 //checks if snake collides with self
@@ -179,19 +180,24 @@ function gameoverScreen(){
 //game functions
 function playGame(){
 if (gameover == false){
-collectFruit()
-update()
-checkCollision()
-drawScreen(x, y, x2, y2)
-document.getElementById("score").innerHTML = 'Points: '+points}
+  collectFruit()
+  update()
+  checkCollision()
+  drawScreen(x, y, x2, y2)
+  document.getElementById("score").innerHTML = 'Points: '+points
+  }
 else{
- gameoverScreen()
- if(scoresent == false){
- sendScore()
- scoresent = true
- }
+   gameoverScreen()
+   if(scoresent == false){
+     sendScore()
+     scoresent = true
+     }
+    }
 }
-}
+
+//game loop
+setInterval( function(){
+playGame()}, 100);
 
 //sends highscore to server
 function sendScore(){
@@ -211,10 +217,6 @@ document.getElementById("highscore").innerHTML = 'High Score: '+ data['highscore
     },
     });
 
-};
-
-//game loop
-setInterval( function(){
-playGame()}, 100);
+}
 </script>
 </html>
