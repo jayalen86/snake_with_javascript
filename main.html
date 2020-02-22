@@ -1,0 +1,220 @@
+
+<html>
+<title>Snake</title>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+<br>
+<div style="width:100%;text-align:center">
+<h1>Snake</h1>
+<canvas id="snake" style="border:1px solid red;" width="500" height="500"></canvas>
+<div><h3 id="score"></h3> <h3 id="highscore">High Score: {{highscore}}</h3></div>
+</div>
+</body>
+<script>
+const canvas = document.getElementById("snake");
+const ctx = canvas.getContext('2d');
+let x = 0;
+let y = 0;
+let x2 = generateRandomInteger(0, 480);
+let y2 = generateRandomInteger(0, 480);
+let points = 0;
+let enlarge = false;
+let tail = [ {x: 0, y:0 }, {x: 0, y:0 }]; 
+let direction = 'R';
+let gameover = false;
+let scoresent = false;
+
+//draws screen
+function drawScreen(x, y, x2, y2){
+  //clears canvas
+ ctx.fillStyle = 'black';
+ ctx.fillRect(0, 0, 500, 500);
+ //head of snake
+ ctx.fillStyle = 'red';
+ ctx.fillRect(x, y, 10, 10);
+ //tail of snake
+ for (i=0; i<tail.length; i++) {
+      ctx.fillStyle = "orange";
+      ctx.fillRect(tail[i].x, tail[i].y, 10, 10)
+  }
+ //fruit
+ ctx.fillStyle = 'green';
+ ctx.fillRect(x2, y2, 10, 10);
+}
+
+//updates snake size and location
+function update(){
+	if (enlarge == true){
+	tail.push(tail[tail.length-1]);
+	enlarge = false;
+	}
+	
+   for (i=0; i < tail.length; i++) {
+      tail[i] = tail[i+1];
+    }
+	 tail[tail.length-1] = {x:x, y:y}
+  
+ switch (direction){
+	case 'R':
+	moveRight()
+	break;
+	case 'L':
+	moveLeft();
+	break;
+	case 'U':
+	moveUp()
+	break;
+	case 'D':
+	moveDown();
+	break;
+ };
+}
+
+//moves right
+function moveRight(){
+	x += 10;
+	if (x >= 500){
+	x = 0;
+	}
+}
+
+//moves left
+function moveLeft(){
+	x -= 10;
+	if (x <= 0){
+	x = 500;
+	}
+}
+
+//moves down
+function moveDown(){
+	y += 10;
+	if (y >= 500){
+	y = 0;
+	}
+}
+
+//moves up
+function moveUp(){
+	y -= 10;
+	if (y <= 0){
+	y = 500;
+	}
+}
+
+//changes direction
+document.onkeyup = checkKey;
+function checkKey(e) {
+    if (e.keyCode == '38') {
+        direction = 'U'
+    }
+    else if (e.keyCode == '40') {
+       direction = 'D';
+    }
+    else if (e.keyCode == '37') {
+       direction = 'L';
+    }
+    else if (e.keyCode == '39') {
+       direction = 'R'
+    }
+	else if (e.keyCode == '82' && gameover == true){
+	   reset()
+	}
+
+}
+
+//checks if any part of snake comes anywhere in contact with the fruit.
+function collectFruit(){
+ if((x >= x2 && x <= x2+10) || (x+10 >= x2 &&  x+10 <= x2+10)){
+     if ((y >= y2 && y <= y2+10) || (y+10 >= y2 && y+10 <= y2+10)){
+		x2 = generateRandomInteger(0, 480);
+		y2 = generateRandomInteger(0, 480);
+		points += 10;
+		enlarge = true;
+	 }
+ }
+}
+
+//checks if snake collides with self
+function checkCollision(){
+for(i=0; i < tail.length ;i++){
+ if(x == tail[i].x && y == tail[i].y){
+        gameover = true;
+        }
+	 }
+ }
+
+//generates random integer
+function generateRandomInteger(min, max) {
+  return Math.floor(min + Math.random()*(max + 1 - min))
+}
+
+//resets game
+function reset(){
+x = 0;
+y = 0;
+x2 = generateRandomInteger(0, 480);
+y2 = generateRandomInteger(0, 480);
+points = 0;
+enlarge = false;
+tail = [ {x: 0, y:0 }, {x: 0, y:0 }]; 
+direction = 'R';
+gameover = false;
+scoresent = false;
+}
+
+//draws gameover screen
+function gameoverScreen(){
+ ctx.fillStyle = 'black';
+ ctx.fillRect(0, 0, 500, 500);
+ ctx.fillStyle = 'white';
+ ctx.font = "30px Arial";
+ ctx.fillText("Gameover", 180, 220);
+ ctx.font = "16px Arial";
+ ctx.fillText("(Press 'R' to reset)", 182, 245);
+}
+
+//game functions
+function playGame(){
+if (gameover == false){
+collectFruit()
+update()
+checkCollision()
+drawScreen(x, y, x2, y2)
+document.getElementById("score").innerHTML = 'Points: '+points}
+else{
+ gameoverScreen()
+ if(scoresent == false){
+ sendScore()
+ scoresent = true
+ }
+}
+}
+
+//sends highscore to server
+function sendScore(){
+var data = {
+  'csrfmiddlewaretoken':"{{ csrf_token }}",
+ 'score':points
+}
+$.ajax({ 
+type: 'post', 
+data: data ,
+url: '{% url "highscore" %}', 
+datatype:'json',
+
+success: function(data) {
+document.getElementById("highscore").innerHTML = 'High Score: '+ data['highscore']
+
+    },
+    });
+
+};
+
+//game loop
+setInterval( function(){
+playGame()}, 100);
+</script>
+</html>
