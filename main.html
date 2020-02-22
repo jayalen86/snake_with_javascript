@@ -109,19 +109,19 @@ function moveUp(){
 document.onkeyup = checkKey;
 function checkKey(e) {
     if (e.keyCode == '38') {
-        direction = 'U';
-    }
-    else if (e.keyCode == '40') {
-       direction = 'D';
+	direction = 'U';
+    } 
+	else if (e.keyCode == '40') {
+	direction = 'D';
     }
     else if (e.keyCode == '37') {
-       direction = 'L';
+    direction = 'L';
     }
     else if (e.keyCode == '39') {
-       direction = 'R';
+    direction = 'R';
     }
-	else if ((e.keyCode == '82' && gameover == true)) {
-	   reset();
+	else if (e.keyCode == '82' && gameover == true) {
+	reset();
 	}
 }
 
