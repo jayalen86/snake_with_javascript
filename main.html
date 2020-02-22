@@ -46,7 +46,7 @@ function drawScreen(x, y, x2, y2){
 
 //updates snake size and location
 function update(){
-	if (enlarge == true){
+	if (enlarge == true) {
 	   tail.push(tail[tail.length-1]);
 	   enlarge = false;
 	}
@@ -120,7 +120,7 @@ function checkKey(e) {
     else if (e.keyCode == '39') {
        direction = 'R'
     }
-	else if (e.keyCode == '82' && gameover == true){
+	else if (e.keyCode == '82' && gameover == true) {
 	   reset()
 	}
 
