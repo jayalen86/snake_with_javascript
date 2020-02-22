@@ -202,14 +202,13 @@ playGame()}, 100);
 function sendScore(){
 var data = {
   'csrfmiddlewaretoken':"{{ csrf_token }}",
- 'score':points
+  'score':points
 }
 $.ajax({ 
 type: 'post', 
 data: data ,
 url: '{% url "highscore" %}', 
 datatype:'json',
-
 success: function(data) {
 document.getElementById("highscore").innerHTML = 'High Score: '+ data['highscore']
 
