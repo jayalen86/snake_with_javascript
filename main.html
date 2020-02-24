@@ -108,19 +108,19 @@ function moveUp(){
 //changes direction
 document.onkeyup = checkKey;
 function checkKey(e) {
-    if (e.keyCode == '38') {
+    if (e.keyCode === 38) {
         direction = 'U';
     }
-    else if (e.keyCode == '40') {
+    else if (e.keyCode === 40) {
        direction = 'D';
     }
-    else if (e.keyCode == '37') {
+    else if (e.keyCode === 37) {
        direction = 'L';
     }
-    else if (e.keyCode == '39') {
+    else if (e.keyCode === 39) {
        direction = 'R';
     }
-    else if (e.keyCode == '82' && gameover == true) {
+    else if (e.keyCode === 82 && gameover === true) {
        reset();
     };
 }
